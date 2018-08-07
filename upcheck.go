@@ -22,8 +22,8 @@ func main() {
 		go checker(link, c)
 	}
 
-	for i := 0; i < len(siteList); i++ {
-		fmt.Println(<-c)
+	for {
+		go checker(<-c, c)
 	}
 
 }
@@ -31,9 +31,11 @@ func main() {
 func checker(link string, c chan string) {
 	_, err := http.Get(link)
 	if err != nil {
-		c <- fmt.Sprintf("%v might be down", link)
+		fmt.Println(link, "Status: [DOWN]")
+		c <- link
 		return
 	}
 
-	c <- fmt.Sprintf("%v working fine", link)
+	fmt.Println(link, "Status: [UP]")
+	c <- link
 }
