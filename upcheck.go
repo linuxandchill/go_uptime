@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type sites []string
@@ -22,9 +23,21 @@ func main() {
 		go checker(link, c)
 	}
 
+	//wait for value to be received on the channel
+	// continue pinging
 	for {
-		go checker(<-c, c)
+		go func(link string) {
+			time.Sleep(3 * time.Second)
+			checker(link, c)
+		}(<-c)
 	}
+
+	/*
+		less readable IMO, not clear that we're waiting for val from channel
+		for link := range c{
+			go checker(link, c)
+		}
+	*/
 
 }
 
